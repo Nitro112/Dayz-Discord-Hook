@@ -26,6 +26,25 @@ class DiscordHook
 		}
 		return false;
 	}
+
+	bool SendHookPlain(string alias, string data)
+	{
+		RestCallback cbx1 = new SilentCallBack;
+		RestApi clCore = GetRestApi();
+
+		if (m_alias.Contains(alias))
+		{
+			if (!clCore)
+			{
+				clCore = CreateRestApi();
+			}
+			RestContext ctx = clCore.GetRestContext(m_alias.Get(alias));
+			ctx.SetHeader("application/json");
+			ctx.POST(cbx1, "", WrapDataPlain(data));
+			return true;
+		}
+		return false;
+	}
 	
 	private string WrapData(ref DiscordJSON data)
 	{
@@ -33,6 +52,13 @@ class DiscordHook
 		
 		json += data.GetJSON();
 		json += "]}";
+		Print(json);
+		return json;
+	}
+
+	private string WrapDataPlain(string data)
+	{
+		string json = "{\"content\":\"" + data + "\"}";
 		Print(json);
 		return json;
 	}
